@@ -11,7 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Things to know:
 Not really too much, just make sure youre able to push to fork and pull from upstream main and upstream.
 
-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 is my personal access token, see [this video](https://duke.zoom.us/rec/play/ThB1xxqsBWMroLF8uuLr0CHPwvKun-3kKNkwiqWmPDweM-klqew3TGOW2GjEh0g31CZt35lJY7ykxeXg.S0QW7arYXX8zQTP1?startTime=1641840541000&_x_zm_rtaid=geKFuxDPSVG6kF0C5vpWXg.1642638001299.966594bd79cc48bd4697285d08cc9512&_x_zm_rhtaid=599):
+So apparently you cant have your personal access token in your commits, which makes sense. 
+[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] is my personal access token, see [this video](https://duke.zoom.us/rec/play/ThB1xxqsBWMroLF8uuLr0CHPwvKun-3kKNkwiqWmPDweM-klqew3TGOW2GjEh0g31CZt35lJY7ykxeXg.S0QW7arYXX8zQTP1?startTime=1641840541000&_x_zm_rtaid=geKFuxDPSVG6kF0C5vpWXg.1642638001299.966594bd79cc48bd4697285d08cc9512&_x_zm_rhtaid=599):
 ## R Markdown
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
