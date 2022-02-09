@@ -63,14 +63,14 @@ vignette("dplyr")
 Filtering allows us to choose certain rows (observations) in our dataset.
 
 Here are the relevant commands used in the `filter` function. Add some notes to designate what these commands mean. 
-`==`
-`!=`
-`<`
-`<=`
-`>`
-`>=`
-`&`
-`|`
+`==` Equals
+`!=` Does Not Equal
+`<` Less than
+`<=` Less than or Equal
+`>` Greater than
+`>=` Greater than or equal
+`&` and
+`|` or
 
 ```{r}
 class(NTL.phys.data$lakeid)
