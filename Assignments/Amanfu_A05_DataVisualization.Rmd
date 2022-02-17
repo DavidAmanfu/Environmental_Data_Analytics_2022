@@ -43,21 +43,31 @@ knitr::opts_knit$set(root.dir = "~/Desktop/Duke MPP/Environ Data /Environmental_
 ```{r}
 #1b
 getwd()
-LTER <- read.csv("./Data/Raw/EPAair_O3_NC2018_raw.csv",stringsAsFactors = TRUE)
-O3_nc19 <- read.csv("./Data/Raw/EPAair_O3_NC2019_raw.csv",stringsAsFactors = TRUE)
-PM25_nc18 <- read.csv("./Data/Raw/EPAair_PM25_NC2018_raw.csv",stringsAsFactors = TRUE)
-PM25_nc19 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv",stringsAsFactors = TRUE)
- 
+NTL_LTER_Lake_Nutrients <- read.csv("Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+NTL_LTER_Lake_ChemistryPhysics <- read.csv("Data/Processed/NTL-LTER_Lake_ChemistryPhysics_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+NEON_NIWO_Litter <- read.csv("Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 
 #2 
+class(NEON_NIWO_Litter$collectDate)
+class(NTL_LTER_Lake_ChemistryPhysics$sampledate)
+class(NTL_LTER_Lake_Nutrients$sampledate)
+NTL_LTER_Lake_ChemistryPhysics$sampledate <- as.Date.factor(NTL_LTER_Lake_ChemistryPhysics$sampledate, tryFormats ="%Y-%m-%d")
+NTL_LTER_Lake_Nutrients$sampledate <- as.Date(NTL_LTER_Lake_Nutrients$sampledate, tryFormats ="%Y-%m-%d")
+NEON_NIWO_Litter$collectDate <- as.Date(NEON_NIWO_Litter$collectDate, tryFormats ="%Y-%m-%d")
+class(NEON_NIWO_Litter$collectDate)
+class(NTL_LTER_Lake_ChemistryPhysics$sampledate)
+class(NTL_LTER_Lake_Nutrients$sampledate)
 
 ```
 ## Define your theme
 3. Build a theme and set it as your default theme.
 
-```{r}
+```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 #3
-
+AmanfuTheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top") #alternative: legend.position + legend.justification
+theme_set(AmanfuTheme)
 ```
 
 ## Create graphs
@@ -67,6 +77,7 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r}
 #4
+ggplot(NTL_LTER_Lake_Nutrients)
 
 ```
 
