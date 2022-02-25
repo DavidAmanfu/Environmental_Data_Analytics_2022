@@ -43,6 +43,7 @@ Research question: Can you see any changes on the rainfall regime or average tem
 
 ```{r}
 #Exercise 1: Import both datasets using the read.csv function.
+knitr::opts_knit$set(root.dir = "~/Desktop/Duke MPP/Environ Data /Environmental_Data_Analytics_2022/")
 Rainfall_BR <- read.csv("./Data/Raw/pr_1901_2016_BRA.csv", stringsAsFactors = TRUE)
 
 Temp_BR <- read.csv("./Data/Raw/tas_1901_2016_BRA.csv", stringsAsFactors = TRUE)
@@ -82,12 +83,13 @@ BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 
 #Exercise 5: Check if there is any missing data for both temperature and rainfall series.
 
-
+is.na(BRA_complete)
 
 
 #Exercise 6: Plot both series over time on separate plots. Add a trend line using geom_smooth(). Can you say something about the trend just by visualizing the data?
 
-
+ggplot(BRA_complete)+
+  geom_line(aes(x = Date,y = Rainfall))
 
 
 

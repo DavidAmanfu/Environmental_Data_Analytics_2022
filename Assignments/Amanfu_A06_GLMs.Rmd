@@ -28,6 +28,7 @@ The completed exercise is due on Monday, February 28 at 7:00 pm.
 ```{r setup}
 #1
 library(tidyverse)
+library(agricolae)
 library(lubridate)
 library(cowplot)
 getwd()
@@ -38,6 +39,11 @@ library(ggthemes)
 library(hrbrthemes)
 library(extrafont)
 library(extrafontdb)
+AmanfuTheme2 <- theme_ipsum()+
+  theme(legend.position = "bottom",
+        legend.key = element_rect(fill = "white", colour = "black"),legend.direction = "horizontal",
+        legend.title = element_text(face = "bold"))
+theme_set(AmanfuTheme2)
 
 
 ```
