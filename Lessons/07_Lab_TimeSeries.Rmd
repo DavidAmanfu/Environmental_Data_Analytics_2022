@@ -33,6 +33,18 @@ mytheme <- theme_classic(base_size = 14) +
   theme(axis.text = element_text(color = "black"), 
         legend.position = "top")
 theme_set(mytheme)
+
+library(ggthemes)
+library(hrbrthemes)
+library(extrafont)
+library(extrafontdb)
+AmanfuTheme2 <- theme_ipsum()+
+  theme(legend.position = "bottom",
+        legend.key = element_rect(fill = "white", colour = "black"),legend.direction = "horizontal",
+        legend.title = element_text(face = "bold"))
+theme_set(AmanfuTheme2)
+
+
 ```
 
 ## Import Datasets
@@ -82,17 +94,20 @@ BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 ```{r}
 
 #Exercise 5: Check if there is any missing data for both temperature and rainfall series.
-
-is.na(BRA_complete)
+summary(BRA_complete$Rainfall)
+summary(BRA_complete$Temperature_C)
+summary(is.na(BRA_complete))
 
 
 #Exercise 6: Plot both series over time on separate plots. Add a trend line using geom_smooth(). Can you say something about the trend just by visualizing the data?
 
 ggplot(BRA_complete)+
-  geom_line(aes(x = Date,y = Rainfall))
+  geom_line(aes(x = Date,y = Rainfall))+
+  geom_smooth(aes(x=Date, y=Rainfall))
 
-
-
+ggplot(BRA_complete)+
+  geom_line(aes(x= Date, y= Temperature_C))+
+  geom_smooth(aes(x=Date, y=Temperature_C))
 
 ```
 
@@ -101,7 +116,8 @@ ggplot(BRA_complete)+
 ```{r}
 #Exercise 7: Create a time series objects for each series using ts(). Make sure you specify the starting point and frequency.
 
-
+BRA_ts_rain <- ts(BRA_complete$Rainfall,start=c(1901,01),frequency=12)
+BRA_ts_temp <- ts(BRA_complete$Temperature_C,start=c(1901,01),frequency=12)
 
 ```
 
@@ -122,18 +138,21 @@ The `stl` function decomposes the time series object into its component parts. W
 
 # Exercise 8: Use the stl() function to decompose both series. 
 # Visualize the decomposed series using plot(). What components can you identify?
+BRA_stl_rain <- stl(BRA_ts_rain,s.window = 13)
+BRA_stl_temp <- stl(BRA_ts_temp,s.window=13)
 
-
-
+plot(stl(BRA_ts_rain,s.window = 13))
+plot(stl(BRA_ts_temp,s.window=13))
 
 
 
 # Exercise 9: Use the times series object generated with the stl() to extract the 
 # components of each series and turn them into data frames.
 
-
-
-
+BRA_STL_DF_Rain <- as.data.frame(BRA_stl_rain$time.series)
+BRA_STL_DF_Temp <- as.data.frame(BRA_stl_temp$time.series)
+#BRA_STL <- BRA_complete%>%mutate(,)
+BRA_
 
 
 # Exercise 10: Visualize how the trend maps onto the data for both series
