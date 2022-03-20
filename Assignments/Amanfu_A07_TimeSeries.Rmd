@@ -103,7 +103,7 @@ colnames(Days) <-"Date"
 
 # 6
 GaringerOzone <- left_join(Days,GaringerOzoneF,by="Date")
-left_join(days,GaringerOzoneF,by = "Date")
+# left_join(days,GaringerOzoneF,by = "Date")
 colnames(GaringerOzone) <- c("Date", "Ozone","AQI")
 ```
 
@@ -144,6 +144,7 @@ GaringerOzoneInterp <- GaringerOzone %>%
 ```
 
 > Answer:  
+Using (piecewise constant) nearest neighbor would leave us with a lot of jagged data, and a spline interpolation uses a cubic polynomial, which would also presumably work, but for simplicity sake and because we are assessing seasonal data, relying on linear interpolation to maintain seasonality probably will give us the least variant noise in our analyses.
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
@@ -188,10 +189,10 @@ plot(Garinger_Monthly)
 ```{r}
 #12
 Garinger_SKendall_M <- SeasonalMannKendall(GaringerOzone.monthly.ts)
-Garinger_SKendall2_M <- smk.test(GaringerOzone.monthly.ts, alternative ="two.sided")
+Garinger_SMK_M <- smk.test(GaringerOzone.monthly.ts, alternative ="less")
 # Garinger_Spearman_M <- cor.test(x=GaringerOzone.monthly.ts,y=GaringerOzone.monthly$MonthDate,method="spearman")
 # Garinger_Kendall_M <- Kendall(GaringerOzone.monthly.ts)
-Garinger_Dick_M <- adf.test(GaringerOzone.monthly.ts, alternative = "e")
+Garinger_Dick_M <- adf.test(GaringerOzone.monthly.ts, alternative = "s")
 
 # Garinger_Kendall_M
 # summary(Garinger_Kendall_M)
@@ -199,8 +200,8 @@ Garinger_Dick_M <- adf.test(GaringerOzone.monthly.ts, alternative = "e")
 Garinger_SKendall_M
 summary(Garinger_SKendall_M)
 
-Garinger_SKendall2_M
-summary(Garinger_SKendall2_M)
+Garinger_SMK_M
+summary(Garinger_SMK_M)
 
 # Garinger_Spearman_M
 # summary(Garinger_Spearman_M)
@@ -234,6 +235,8 @@ Garinger_Monthly_plot
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
 > Answer: 
+We are plotting ozone concentrations over a period of 10 years, and attempting to establish whether there is a seasonally-adjusted trend -- meaning that there is statistical deviation from an established norm or baseline over time. As such, we plot the raw data (in black, the line plot with dotted points), and the results of our time series decomposition, displaying the seasonally adjusted trend (the red line).
+While we observe general seasonal peaks and valleys throughout each year, when analyzed with a Sasonal Mann-Kendall (SMK) test we can see that there is year-to-year variation. Without reading the statistical outpu, the trend line, in red, seems quite static in comparison, suggesting there is no variation. The output from these tests show a different story, where statistically, there is a distinct change, and we can reject our null hypothesis that there is no difference in trend for ozone concentrations. Using the  SeasonalMannKendall() function we find a p value of 0.0467, less than our 95% confidence interval, which would imply that we cannot say there is no trend. Alternatively, there is a change in ozone trend over time. The smk.test() (with an alternative hypothesis of Ha<0) function backs this up, finding a p-value of 0.024, which lends additional statistical support to our theory.
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.
 
@@ -250,6 +253,18 @@ SeasonalOzone.monthly.ts <- ts(MonthlyOzone$SznAdj,start=c(2010,01),frequency=12
 AdjGaringer_Kendall <- Kendall(x=MonthlyOzone$MonthDate, y=SeasonalOzone.monthly.ts)
 AdjGaringer_Kendall
 summary(AdjGaringer_Kendall)
+
+Garinger_Monthly_plot2 <- ggplot(MonthlyOzone,aes(x=MonthDate))+
+  geom_line(aes(y=SznAdj,color="blue"))+
+  geom_point(aes(y=meanOzone))+
+  geom_line(aes(y=meanOzone))+
+  geom_line(aes(y=Trend,color="red"))+
+  geom_hline(yintercept = 0, lty = 2)+
+  labs(title = "Mean Monthly Ozone Concentrations",y="Mean Ozone Concentration (PPM)",x="Date")
+
+Garinger_Monthly_plot2
+
 ```
 
 > Answer: 
+I am not sure if I am interpreting this correctly but it appears that the seasonal adjusted trend , when analyzed through Mann Kendall, actually shows there is no monotonic trend, contrary to our seasonal Mann Kendall analysis above. Whether that's because I did this wrong or because its fundamentally different I'm a bit unclear. 
