@@ -4,7 +4,6 @@ author: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kate
 date: "Spring 2022"
 output:
  pdf_document: default
-
 ---
 
 ## LESSON OBJECTIVES
@@ -22,15 +21,17 @@ output:
 
 ## BASIC R MARKDOWN DOCUMENT STRUCTURE
 
-1. **YAML Header** surrounded by --- on top and bottom
-    + YAML templates include options for html, pdf, word, markdown, and interactive
-    + More information on formatting the YAML header can be found in the cheat sheet
-2. **R Code Chunks** surrounded by ``` on top and bottom
-    + Create using `Cmd/Ctrl` + `Alt` + `I`
-    + Can be named {r name} to facilitate navigation and autoreferencing
-    + Chunk options allow for flexibility when the code runs and when the document is knitted
-3. **Text** with formatting options for readability in knitted document
+1.  **YAML Header** surrounded by --- on top and bottom
 
+    -   YAML templates include options for html, pdf, word, markdown, and interactive
+    -   More information on formatting the YAML header can be found in the cheat sheet
+
+2.  **R Code Chunks** surrounded by \`\``on top and bottom     + Create using`Cmd/Ctrl`+`Alt`+`I\`
+
+    -   Can be named {r name} to facilitate navigation and autoreferencing
+    -   Chunk options allow for flexibility when the code runs and when the document is knitted
+
+3.  **Text** with formatting options for readability in knitted document
 
 ## RESOURCES
 
@@ -40,43 +41,47 @@ There's also a quick reference available via the `Help`→`Markdown Quick Refere
 
 Lastly, this [website](https://rmarkdown.rstudio.com) give a great & thorough overview.
 
-
 ## THE KNITTING PROCESS
--   The knitting sequence
-    ![knitting](../lessons/img/rmarkdownflow.png)
 
-* Knitting commands in code chunks:
- - `include = FALSE` - code is run, but neither code nor results appear in knitted file
- - `echo = FALSE`    - code not included in knitted file, but results are
- - `eval = FALSE`    - code is not run in the knitted file
- - `message = FALSE` - messages do not appear in knitted file
- - `warning = FALSE` - warnings do not appear...
- - `fig.cap = "..."` - adds a caption to graphical results
+-   The knitting sequence ![knitting](../lessons/img/rmarkdownflow.png)
 
+-   Knitting commands in code chunks:
+
+-   `include = FALSE` - code is run, but neither code nor results appear in knitted file
+
+-   `echo = FALSE` - code not included in knitted file, but results are
+
+-   `eval = FALSE` - code is not run in the knitted file
+
+-   `message = FALSE` - messages do not appear in knitted file
+
+-   `warning = FALSE` - warnings do not appear...
+
+-   `fig.cap = "..."` - adds a caption to graphical results
 
 ## WHAT ELSE CAN R MARKDOWN DO?
-See: <https://rmarkdown.rstudio.com> and class recording. 
- * Languages other than R...
- * Various outputs...
- 
+
+See: <https://rmarkdown.rstudio.com> and class recording. \* Languages other than R... \* Various outputs...
+
 ------------------------------------------------------------------------
 
 ## WHY R MARKDOWN?
 
-<Fill in our discussion below with bullet points. Use italics and bold for emphasis (hint: use the cheat sheets or `Help` →`Markdown Quick Reference` to figure out how to make bold and italic text).> 
+\<Fill in our discussion below with bullet points. Use italics and bold for emphasis (hint: use the cheat sheets or `Help` →`Markdown Quick Reference` to figure out how to make bold and italic text).>
 
+-   *here's some fun text*
+
+-   **here's some other fun text**
 
 ## TEXT EDITING CHALLENGE
 
 Create a table below that details the example datasets we have been using in class. The first column should contain the names of the datasets and the second column should include some relevant information about the datasets. (Hint: use the cheat sheets to figure out how to make a table in Rmd)
-
 
 ## R CHUNK EDITING CHALLENGE
 
 ### Installing packages
 
 Create an R chunk below that installs the package `knitr`. Instead of commenting out the code, customize the chunk options such that the code is not evaluated (i.e., not run).
-
 
 ### Setup
 
@@ -85,7 +90,6 @@ Create an R chunk below called "setup" that checks your working directory, loads
 Load the NTL-LTER_Lake_Nutrients_Raw dataset, display the head of the dataset, and set the date column to a date format.
 
 Customize the chunk options such that the code is run but is not displayed in the final document.
-
 
 ### Data Exploration, Wrangling, and Visualization
 
@@ -101,31 +105,30 @@ Create a third R chunk that uses the function `kable` in the knitr package to di
 
 Create a fourth and fifth R chunk that generates two plots (one in each chunk): one for total N over time with different colors for each lake, and one with the same setup but for total P. Decide which geom option will be appropriate for your purpose, and select a color palette that is visually pleasing and accessible. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, customize the chunk options such that the figures are aligned on the left side of the page. Lastly, add a fig.cap chunk option to add a caption (title) to your plot that will display underneath the figure.
 
-
 ### Communicating results
 
 Write a paragraph describing your findings from the R coding challenge above. This should be geared toward an educated audience but one that is not necessarily familiar with the dataset. Then insert a horizontal rule below the paragraph. Below the horizontal rule, write another paragraph describing the next steps you might take in analyzing this dataset. What questions might you be able to answer, and what analyses would you conduct to answer those questions?
 
-
 ## KNIT YOUR PDF
+
 When you have completed the above steps, try knitting your PDF to see if all of the formatting options you specified turned out as planned. This may take some troubleshooting.
 
 ## OTHER R MARKDOWN CUSTOMIZATION OPTIONS
 
 We have covered the basics in class today, but R Markdown offers many customization options. A word of caution: customizing templates will often require more interaction with LaTeX and installations on your computer, so be ready to troubleshoot issues.
 
-Customization options for pdf output include: 
+Customization options for pdf output include:
 
-* Table of contents
-* Number sections
-* Control default size of figures
-* Citations
-* Template (more info [here](http://jianghao.wang/post/2017-12-08-rmarkdown-templates/))
+-   Table of contents
+-   Number sections
+-   Control default size of figures
+-   Citations
+-   Template (more info [here](http://jianghao.wang/post/2017-12-08-rmarkdown-templates/))
 
-pdf_document:  
-    toc: true  
-    number_sections: true  
-    fig_height: 3  
-    fig_width: 4  
-    citation_package: natbib  
-    template:  
+pdf_document:\
+toc: true\
+number_sections: true\
+fig_height: 3\
+fig_width: 4\
+citation_package: natbib\
+template:
