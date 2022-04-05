@@ -87,7 +87,7 @@ Indicate this website as the as the URL to be scraped. (In other words, read the
 ```{r set.the.scraping.website}
 #2
 # https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2020
-Durham_LWSP <- read_html('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2020')
+Durham_LWSP <- read_html('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2017')
 Durham_LWSP
 ```
 
@@ -107,10 +107,18 @@ In the code chunk below scrape these values, assigning them to three separate va
 
 ```{r scrape.the.data}
 #3
-water.system.name <- Durham_LWSP %>% html_nodes('ttable:nth-child(7) tr:nth-child(1) td:nth-child(2)') %>% html_text()
+water.system.name <- Durham_LWSP %>% html_nodes('table:nth-child(7) tr:nth-child(1) td:nth-child(2)') %>% html_text()
 pwsid <- Durham_LWSP %>% html_nodes('tr:nth-child(1) > td:nth-child(5)') %>% html_text()
 ownership <- Durham_LWSP %>% html_nodes('table:nth-child(7) tr:nth-child(2) td:nth-child(4)') %>% html_text()
-max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(':nth-child(31) td:nth-child(9) , tr:nth-child(4) :nth-child(9) tr:nth-child(3) tr:nth-child(2) :nth-child(9), :nth-child(31) td:nth-child(6), :nth-child(31) td:nth-child(3)') %>% html_text()
+
+mgd.key <- ':nth-child(32) td:nth-child(9) , :nth-child(32) td:nth-child(6) tr:nth-child(2) :nth-child(9), :nth-child(32) td:nth-child(6), :nth-child(32) td:nth-child(3)'
+# ':nth-child(32) td:nth-child(6) , td:nth-child(9), :nth-child(32) td:nth-child(6), :nth-child(32) td:nth-child(3)'
+#  'tr:nth-child(2) td:nth-child(9) , :nth-child(32) td:nth-child(6), :nth-child(32) td:nth-child(3), :nth-child(32) td:nth-child(3)' 
+# ':nth-child(31) td:nth-child(9) , tr:nth-child(4) :nth-child(9) tr:nth-child(3) tr:nth-child(2) :nth-child(9), :nth-child(31) td:nth-child(6), :nth-child(31) td:nth-child(3)'
+
+max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(mgd.key) %>% html_text()
+
+
 ```
 
 
@@ -125,10 +133,16 @@ max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(':nth-child(31) td:nth-child(9
 ```{r create.a.dataframe.from.scraped.data}
 #4
 
-
-
+scrapetest <- data.frame("Year"=rep("2017",12),
+                         "Month"=c("Jan","May","Sep","Feb","Jun","Oct","Mar","Jul","Nov","Apr","Aug","Dec"),
+                         "System"=rep(water.system.name,12),
+                         "PWSID"=rep(pwsid,12),
+                         "Ownership"=rep(ownership,12),
+                         "Withdrawals"=max.withdrawals.mgd) %>% mutate("yearchar" =ym(paste0(Year,"-",Month)))
 #5
-
+scrapetest
+durham2020 <- ggplot(scrapetest,aes(x=yearchar))+geom_point(aes(y=Withdrawals))
+durham2020
 
 
 ```
@@ -138,7 +152,44 @@ max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(':nth-child(31) td:nth-child(9
 ```{r construct.a.scraping.function}
 #6.
 
+the_facility <- '03-32-010'
+the_year <- 2015
 
+scrape.it <- function(the_year, the_facility){
+  
+  #Retrieve the website contents 
+  the_base_url <- 'https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid='
+  the_scrape_url <- paste0(the_base_url, the_facility, '&year=', the_year)
+  the_website <- read_html(the_scrape_url)
+
+  #Set the element address variables (determined in the previous step)
+  water.system.name_node <- 'table:nth-child(7) tr:nth-child(1) td:nth-child(2)'
+  pwsid_node <- 'tr:nth-child(1) > td:nth-child(5)'
+  ownership_node <- 'table:nth-child(7) tr:nth-child(2) td:nth-child(4)'
+  max.withdrawals.mgd_node <- 'th~ td+ td'
+    #':nth-child(32) td:nth-child(9) , :nth-child(32) td:nth-child(6) tr:nth-child(2) :nth-child(9), :nth-child(32) td:nth-child(6), :nth-child(32) td:nth-child(3)'
+    #':nth-child(31) td:nth-child(9) , tr:nth-child(4) :nth-child(9) tr:nth-child(3) tr:nth-child(2) :nth-child(9), :nth-child(31) td:nth-child(6), :nth-child(31) td:nth-child(3)'
+  #Scrape the data items
+  water.system.name <- the_website %>% html_nodes(water.system.name_node) %>% html_text()
+  pwsid <- the_website %>%   html_nodes(pwsid_node) %>%  html_text()
+  ownership <- the_website %>% html_nodes(ownership_node) %>% html_text()
+  max.withdrawals.mgd <- the_website %>% html_nodes(max.withdrawals.mgd_node) %>% html_text()
+  
+  #Construct a dataframe from the scraped data
+  df_withdrawals <- data.frame("Year"=rep(the_year,12),
+                           "Month"=c("Jan","May","Sep","Feb","Jun","Oct","Mar","Jul","Nov","Apr","Aug","Dec"),
+                           "System"=rep(water.system.name,12),
+                           "PWSID"=rep(pwsid,12),
+                           "Ownership"=rep(ownership,12),
+                           "Withdrawals"=max.withdrawals.mgd) %>% 
+                      mutate("yearchar" =ym(paste0(Year,"-",Month)))
+   
+  #Pause for a moment - scraping etiquette
+  #Sys.sleep(1) #uncomment this if you are doing bulk scraping!
+  
+  #Return the dataframe
+  return(df_withdrawals)
+}
 
 ```
 
@@ -146,15 +197,22 @@ max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(':nth-child(31) td:nth-child(9
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7
-
+scrapetest2015 <-scrape.it(2015,'03-32-010')
+scrapetest2015
+durham2015 <- ggplot(scrapetest2015,aes(x=yearchar))+geom_point(aes(y=Withdrawals))+labs(title="2015 Max Withdrawals, Durham",x="Date")
+durham2015
 
 ```
 
 8. Use the function above to extract data for Asheville (PWSID = 01-11-010) in 2015. Combine this data with the Durham data collected above and create a plot that compares the Asheville to Durham's water withdrawals.
 
-```{r fetch.and.plot.Durham.2015.data}
+```{r fetch.and.plot.Asheville.2015.data}
 #8
-
+Asheville2015 <-scrape.it(2015,'01-11-010')
+DurhAshe <- union(scrapetest2015,Asheville2015)
+DurhAshe
+DurhAsheville2015 <- ggplot(DurhAshe,aes(x=yearchar,y=Withdrawals))+geom_point(aes(color=System))+labs(title="2015 Max Withdrawals, Durham",x="Date")
+DurhAsheville2015
 
 ```
 
@@ -163,8 +221,19 @@ max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(':nth-child(31) td:nth-child(9
 
 ```{r}
 #9
+yeargap <- seq(2010,2019,1)
+yeargap
+Asheville20102019 <- for (i in yeargap) {
+                            scrape.it(yeargap[i],'01-11-010')
+}
+Asheville20102019
 
-
+scrape.it(2011,'01-11-010')
+scrape.it(2012,'01-11-010')
+scrape.it(2013,'01-11-010')
+scrape.it(2014,'01-11-010')
+scrape.it(2015,'01-11-010'),scrape.it(2016,'01-11-010'),scrape.it(2017,'01-11-010'),scrape.it(2018,'01-11-010'),scrape.it(2019,'01-11-010'))
+Asheville20102019
 ```
 
 >Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?

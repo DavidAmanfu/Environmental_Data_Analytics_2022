@@ -237,6 +237,59 @@ scrape.it <- function(the_year){
 }
 
 
+
+the_facility <- '03-32-010'
+the_year <- 2015
+
+scrape.it <- function(the_year, the_facility){
+  
+  #Retrieve the website contents 
+  the_base_url <- 'https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid='
+  the_scrape_url <- paste0(the_base_url, the_facility, '&year=', the_year)
+  the_website <- read_html(the_scrape_url)
+
+  #Set the element address variables (determined in the previous step)
+  water.system.name_node <- 'table:nth-child(7) tr:nth-child(1) td:nth-child(2)'
+  pwsid_node <- 'tr:nth-child(1) > td:nth-child(5)'
+  ownership_node <- 'table:nth-child(7) tr:nth-child(2) td:nth-child(4)'
+  max.withdrawals.mgd_node <- ':nth-child(31) td:nth-child(9) , tr:nth-child(4) :nth-child(9) tr:nth-child(3) tr:nth-child(2) :nth-child(9), :nth-child(31) td:nth-child(6), :nth-child(31) td:nth-child(3)'
+  #Scrape the data items
+  water.system.name <- the_website %>% html_nodes(water.system.name_node) %>% html_text()
+  pwsid <- the_website %>%   html_nodes(pwsid_node) %>%  html_text()
+  ownership <- the_website %>% html_nodes(ownership_node) %>% html_text()
+  max.withdrawals.mgd <- the_website %>% html_nodes(max.withdrawals.mgd_node) %>% html_text()
+  
+  #Construct a dataframe from the scraped data
+  df_withdrawals <- data.frame("Year"=rep(the_year,12),
+                           "Month"=c("Jan","May","Sep","Feb","Jun","Oct","Mar","Jul","Nov","Apr","Aug","Dec"),
+                           "System"=rep(water.system.name,12),
+                           "PWSID"=rep(pwsid,12),
+                           "Ownership"=rep(ownership,12),
+                           "Withdrawals"=max.withdrawals.mgd) %>% 
+    scrapetest <- scrapetest %>% mutate("yearchar" =ym(paste0(Year,"-",Month)))
+                      mutate("yearchar" =ym(paste0(Year,"-",Month)))
+   
+  #Pause for a moment - scraping etiquette
+  #Sys.sleep(1) #uncomment this if you are doing bulk scraping!
+  
+  #Return the dataframe
+  return(df_withdrawals)
+}
+
+```
+
+7. Use the function above to extract and plot max daily withdrawals for Durham (PWSID='03-32-010') for each month in 2015
+
+```{r fetch.and.plot.Durham.2015.data}
+#7
+scrapetest3 <-scrape.it(2017,'03-32-010')
+scrapetest2
+durham2020 <- ggplot(scrapetest2,aes(x=yearchar))+geom_point(aes(y=Withdrawals))
+durham2020
+
+```
+
+
 # Use the above function to scrape data for 2017
 
 
