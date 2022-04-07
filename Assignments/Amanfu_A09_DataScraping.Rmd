@@ -1,6 +1,6 @@
 ---
 title: "Assignment 09: Data Scraping"
-author: "Student Name"
+author: "David Amanfu"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -112,12 +112,12 @@ pwsid <- Durham_LWSP %>% html_nodes('tr:nth-child(1) > td:nth-child(5)') %>% htm
 ownership <- Durham_LWSP %>% html_nodes('table:nth-child(7) tr:nth-child(2) td:nth-child(4)') %>% html_text()
 
 mgd.key <- ':nth-child(32) td:nth-child(9) , :nth-child(32) td:nth-child(6) tr:nth-child(2) :nth-child(9), :nth-child(32) td:nth-child(6), :nth-child(32) td:nth-child(3)'
+max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(mgd.key) %>% html_text()
+
+#These failed trials are from using the selector gadget in Safari and Firefox:
 # ':nth-child(32) td:nth-child(6) , td:nth-child(9), :nth-child(32) td:nth-child(6), :nth-child(32) td:nth-child(3)'
 #  'tr:nth-child(2) td:nth-child(9) , :nth-child(32) td:nth-child(6), :nth-child(32) td:nth-child(3), :nth-child(32) td:nth-child(3)' 
 # ':nth-child(31) td:nth-child(9) , tr:nth-child(4) :nth-child(9) tr:nth-child(3) tr:nth-child(2) :nth-child(9), :nth-child(31) td:nth-child(6), :nth-child(31) td:nth-child(3)'
-
-max.withdrawals.mgd <- Durham_LWSP %>% html_nodes(mgd.key) %>% html_text()
-
 
 ```
 
@@ -138,10 +138,10 @@ scrapetest <- data.frame("Year"=rep("2017",12),
                          "System"=rep(water.system.name,12),
                          "PWSID"=rep(pwsid,12),
                          "Ownership"=rep(ownership,12),
-                         "Withdrawals"=max.withdrawals.mgd) %>% mutate("yearchar" =ym(paste0(Year,"-",Month)))
+                         "Withdrawals"=as.double(max.withdrawals.mgd)) %>% mutate("yearchar" =ym(paste0(Year,"-",Month)))
 #5
 scrapetest
-durham2020 <- ggplot(scrapetest,aes(x=yearchar))+geom_point(aes(y=Withdrawals))
+durham2020 <- ggplot(scrapetest,aes(x=yearchar))+geom_point(aes(y=Withdrawals))+labs(title="2020 Max Withdrawals, Durham",x="Date")
 durham2020
 
 
@@ -181,7 +181,7 @@ scrape.it <- function(the_year, the_facility){
                            "System"=rep(water.system.name,12),
                            "PWSID"=rep(pwsid,12),
                            "Ownership"=rep(ownership,12),
-                           "Withdrawals"=max.withdrawals.mgd) %>% 
+                           "Withdrawals"=as.double(max.withdrawals.mgd)) %>% 
                       mutate("yearchar" =ym(paste0(Year,"-",Month)))
    
   #Pause for a moment - scraping etiquette
@@ -211,7 +211,7 @@ durham2015
 Asheville2015 <-scrape.it(2015,'01-11-010')
 DurhAshe <- union(scrapetest2015,Asheville2015)
 DurhAshe
-DurhAsheville2015 <- ggplot(DurhAshe,aes(x=yearchar,y=Withdrawals))+geom_point(aes(color=System))+labs(title="2015 Max Withdrawals, Durham",x="Date")
+DurhAsheville2015 <- ggplot(DurhAshe,aes(x=yearchar,y=Withdrawals))+geom_point(aes(color=System))+labs(title="2015 Max Withdrawals, Durham & Asheville",x="Date")
 DurhAsheville2015
 
 ```
@@ -221,19 +221,18 @@ DurhAsheville2015
 
 ```{r}
 #9
-yeargap <- seq(2010,2019,1)
+yeargap <- rep(2010:2019)
 yeargap
-Asheville20102019 <- for (i in yeargap) {
-                            scrape.it(yeargap[i],'01-11-010')
-}
-Asheville20102019
-
-scrape.it(2011,'01-11-010')
-scrape.it(2012,'01-11-010')
-scrape.it(2013,'01-11-010')
-scrape.it(2014,'01-11-010')
-scrape.it(2015,'01-11-010'),scrape.it(2016,'01-11-010'),scrape.it(2017,'01-11-010'),scrape.it(2018,'01-11-010'),scrape.it(2019,'01-11-010'))
-Asheville20102019
+our_facility <- '01-11-010'
+the_dfs <- lapply(X = yeargap,
+                  FUN = scrape.it,
+                  the_facility=our_facility)
+Asheville20102019 <- bind_rows(the_dfs)
+#Asheville20102019
+Asheville1019 <- ggplot(Asheville20102019,aes(x=yearchar,y=Withdrawals))+
+                  geom_smooth(method=lm)+geom_point(aes(color=System))+labs(title="2010-2019 Max Withdrawals, Asheville",x="Date")
+Asheville1019
 ```
 
 >Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
+It does! It appears that it is pretty constant from 2010 through 2018, and then we see a marked difference in water usage, given the increase starting in about late 2019.
