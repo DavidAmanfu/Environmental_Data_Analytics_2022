@@ -1,6 +1,7 @@
 ---
-title: '11: Crafting Reports'
-author: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kateri Salk
+title: 'A11: Crafting Reports'
+subtitle: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kateri Salk 
+author: "David Amanfu"
 date: "Spring 2022"
 output:
  pdf_document: default
@@ -104,6 +105,8 @@ getwd()
 library(tidyverse)
 library(lubridate)
 library(knitr)
+library(extrafont)
+library(extrafontdb)
 library(hrbrthemes)
 
 
@@ -148,7 +151,7 @@ NTL_nut_Nitro <- NTL_Nut %>%
 NTL_nut_Phospho <- NTL_Nut %>%
   group_by(lakename) %>%
     summarise(mean(tp_ug),min(tp_ug),max(tp_ug),sd(tp_ug))
-
+class(NTL_Nut$sampledate)
 # 
 # NTL_nut_Nitro
 # NTL_nut_Phospho
@@ -164,16 +167,20 @@ kable(NTL_nut_Phospho,caption="Summary Statistics for Phosophorus, by Lake")
 Create a fourth and fifth R chunk that generates two plots (one in each chunk): one for total N over time with different colors for each lake, and one with the same setup but for total P. Decide which geom option will be appropriate for your purpose, and select a color palette that is visually pleasing and accessible. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, customize the chunk options such that the figures are aligned on the left side of the page. Lastly, add a fig.cap chunk option to add a caption (title) to your plot that will display underneath the figure.
 
 ```{r nitrogen,echo=FALSE,fig.align='left',fig.cap="Nitrogen Content By Lake Over Time"}
-ggplot(NTL_Nut,aes(x=daynum,y=tn_ug))+geom_step(aes(color=lakename))+labs(x="Day Number (Annual)",y="Total Nitrogen")
+ggplot(NTL_Nut,aes(x=sampledate,y=tn_ug))+geom_step(aes(color=lakename))+labs(x="Day Number (Annual)",y="Total Nitrogen (micrograms)",title="Nitrogen Content By Lake Over Time")
 ```
 
-```{r,echo=FALSE}
-ggplot(NTL_Nut,aes(x=daynum,y=tp_ug))+geom_step(aes(color=lakename))+labs(x="Day Number (Annual)",y="Total Phosphorus",title="Phosphorus Content By Lake Over Time")
+```{r phosphorus,echo=FALSE,fig.align='left',fig.cap="Phosphorus Content By Lake Over Time"}
+ggplot(NTL_Nut,aes(x=sampledate,y=tp_ug))+geom_step(aes(color=lakename))+labs(x="Day Number (Annual)",y="Total Phosphorus (micrograms)",title="Phosphorus Content By Lake Over Time")
 ```
 
 ### Communicating results
 
 Write a paragraph describing your findings from the R coding challenge above. This should be geared toward an educated audience but one that is not necessarily familiar with the dataset. Then insert a horizontal rule below the paragraph. Below the horizontal rule, write another paragraph describing the next steps you might take in analyzing this dataset. What questions might you be able to answer, and what analyses would you conduct to answer those questions?
+
+>So interestingly enough this dataset shows two reasonable amounts of data gathered over a year in a total of 8 lakes. Surface chemical readings were taken to measure phosphorus content as well as nitrogen content. We find in figures 1 and 2 how these values vary over time, with the x axis representing the date (the four digit code representing the year 19**, eg. 0092 is 1992) and the y axis being the lake nutrient content in micrograms. Given that there are large gaps in the data, and all of these were taken during summer months, we have these jagged bursts in the interstitial periods. 
+*****
+>The next things I would probably do are to take take a time series analysis approach, much like we did in A07, creating time series objects, filling in data gaps, and decomposing the data to look at the residual components. We'd be able to better understand if there's a cyclical nature to the trend, and if there is variation over time within each of these lakes. While we might expect some seasonality, we may come away surprised.
 
 ## KNIT YOUR PDF
 
